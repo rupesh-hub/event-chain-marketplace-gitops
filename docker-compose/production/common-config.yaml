@@ -1,4 +1,4 @@
 services:
   network-configuration:
     networks:
-      - ecom-ms
+      - ecm-ms

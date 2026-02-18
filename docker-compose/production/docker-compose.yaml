@@ -7,7 +7,7 @@ services:
     env_file:
       - .env
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8181/actuator/health/readiness"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8181/actuator/health/readiness" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -26,7 +26,7 @@ services:
     env_file:
       - .env
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8282/actuator/health/readiness"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8282/actuator/health/readiness" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -34,6 +34,19 @@ services:
     extends:
       file: common-config.yaml
       service: network-configuration
+
+  ecm-frontend-svc:
+    image: rupesh1997/ecm-frontend-svc:1.0.0
+    container_name: ecm-frontend-svc
+    ports:
+      - "8080:80"
+    depends_on:
+      order-service:
+        condition: service_healthy
+    extends:
+      file: common-config.yaml
+      service: network-configuration
+
 networks:
-  ecom-ms:
+  ecm-ms:
     driver: bridge

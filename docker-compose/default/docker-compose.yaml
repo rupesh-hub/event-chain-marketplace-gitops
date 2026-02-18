@@ -1,7 +1,7 @@
 services:
 
   product-service:
-    image: rupesh1997/product-service:1.0.0
+    image: rupesh1997/product-service:1.0.2
     container_name: product-service
     ports:
       - "8181:8181"
@@ -18,7 +18,7 @@ services:
       service: network-configuration
 
   order-service:
-    image: rupesh1997/order-service:1.0.0
+    image: rupesh1997/order-service:1.0.2
     container_name: order-service
     ports:
       - "8282:8282"
@@ -38,6 +38,18 @@ services:
       file: common-config.yaml
       service: network-configuration
 
+  ecm-frontend-svc:
+    image: rupesh1997/ecm-frontend-svc:1.0.0
+    container_name: ecm-frontend-svc
+    ports:
+      - "8080:80"
+    depends_on:
+      order-service:
+        condition: service_healthy
+    extends:
+      file: common-config.yaml
+      service: network-configuration
+
 networks:
-  ecom-ms:
+  ecm-ms:
     driver: bridge
