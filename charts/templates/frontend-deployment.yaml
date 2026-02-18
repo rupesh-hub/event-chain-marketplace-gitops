@@ -5,6 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app: {{ .Chart.Name }}-frontend
+
 spec:
   {{- if not .Values.frontend.autoscaling.enabled }}
   replicas: {{ .Values.frontend.replicas }}
@@ -32,11 +33,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 
-      {{- with .Values.global.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-
+      # =========================
+      # INIT CONTAINER
+      # =========================
       initContainers:
         - name: wait-for-order-service
           image: curlimages/curl:latest
@@ -51,6 +50,9 @@ spec:
               done
               echo "Order service is up - starting frontend"
 
+      # =========================
+      # MAIN CONTAINER
+      # =========================
       containers:
         - name: {{ .Chart.Name }}-frontend
           image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag | default "latest" }}"
