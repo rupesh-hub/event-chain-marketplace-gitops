@@ -1,6 +1,6 @@
 services:
   product-service:
-    image: rupesh1997/product-service:1.0.0
+    image: ""
     container_name: product-service
     ports:
       - "8181:8181"
