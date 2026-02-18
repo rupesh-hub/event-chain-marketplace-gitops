@@ -1,29 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: order-svc-deployment
+  name: frontend-deployment
   namespace: ecm
   labels:
-    app: order-svc-deployment
+    app: frontend-deployment
 
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: order-svc-deployment
+      app: frontend-deployment
   template:
     metadata:
       labels:
-        app: order-svc-deployment
+        app: frontend-deployment
     spec:
       containers:
-        - name: order-svc-deployment
-          image: "rupesh1997/order-service:1.0.2"
+        - name: frontend-deployment
+          image: "rupesh1997/ecm-frontend-svc:1.0.0"
           ports:
-            - containerPort: 8282
-          env:
-            - name: SPRING_PROFILES_ACTIVE
-              value: "production"
+            - containerPort: 80
           resources:
             requests:
               memory: "256Mi"

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  namespace: ecm
+
+spec:
+  selector:
+    app: frontend-deployment
+  ports:
+    - port: 8080
+      targetPort: 80
+      protocol: TCP
+  type: LoadBalancer
