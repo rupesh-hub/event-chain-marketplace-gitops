@@ -37,6 +37,20 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 
+      initContainers:
+        - name: wait-for-product-service
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              echo "Checking product service health at http://product-service:{{ .Values.product.service.port }}/actuator/health"
+              until curl -f http://product-service:{{ .Values.product.service.port }}/actuator/health 2>/dev/null; do
+                echo "Product service is unavailable - sleeping"
+                sleep 5
+              done
+              echo "Product service is up - starting order service"
+
       containers:
         - name: {{ .Chart.Name }}-order-service
           image: "{{ .Values.order.image.repository }}:{{ .Values.order.image.tag | default "latest" }}"
