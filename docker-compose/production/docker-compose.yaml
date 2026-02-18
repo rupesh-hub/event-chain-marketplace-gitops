@@ -1,0 +1,42 @@
+services:
+
+  product-service:
+    image: rupesh1997/product-service:1.0.0
+    container_name: product-service
+    ports:
+      - "8181:8181"
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8181/actuator/health/readiness" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    extends:
+      file: common-config.yaml
+      service: network-configuration
+
+  order-service:
+    image: rupesh1997/order-service:1.0.0
+    container_name: order-service
+    ports:
+      - "8282:8282"
+    depends_on:
+      product-service:
+        condition: service_healthy
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8282/actuator/health/readiness" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    extends:
+      file: common-config.yaml
+      service: network-configuration
+
+networks:
+  ecom-ms:
+    driver: bridge

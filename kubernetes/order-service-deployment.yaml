@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-svc-deployment
+  namespace: ecm
+  labels:
+    app: order-svc-deployment
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-svc-deployment
+  template:
+    metadata:
+      labels:
+        app: order-svc-deployment
+    spec:
+      containers:
+        - name: order-svc-deployment
+          image: "rupesh1997/order-service:1.0.0"
+          ports:
+            - containerPort: 8282
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "production"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

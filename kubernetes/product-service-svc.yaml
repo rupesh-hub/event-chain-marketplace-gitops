@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-service
+  namespace: ecm
+
+spec:
+  selector:
+    app: product-svc-deployment
+  ports:
+    - port: 8181
+      targetPort: 8181
+      protocol: TCP
+  type: LoadBalancer

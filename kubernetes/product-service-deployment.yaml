@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-svc-deployment
+  namespace: ecm
+  labels:
+    app: product-svc-deployment
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-svc-deployment
+  template:
+    metadata:
+      labels:
+        app: product-svc-deployment
+    spec:
+      containers:
+        - name: product-svc-deployment
+          image: "rupesh1997/product-service:1.0.0"
+          ports:
+            - containerPort: 8181
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "production"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

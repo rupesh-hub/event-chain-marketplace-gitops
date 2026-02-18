@@ -1,0 +1,4 @@
+services:
+  network-configuration:
+    networks:
+      - ecm-nw
