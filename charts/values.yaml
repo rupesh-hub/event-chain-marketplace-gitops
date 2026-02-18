@@ -26,10 +26,6 @@ product:
     automount: true
     name: "product-service-account"
 
-  podSecurityContext:
-    runAsNonRoot: true
-    runAsUser: 1000
-
   containerSecurityContext:
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: false
@@ -80,10 +76,6 @@ order:
     automount: true
     name: "order-service-account"
 
-  podSecurityContext:
-    runAsNonRoot: true
-    runAsUser: 1000
-
   containerSecurityContext:
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: false
@@ -119,16 +111,12 @@ frontend:
   service:
     port: 8080
     targetPort: 80
-    type: ClusterIP
+    type: NodePort
 
   serviceAccount:
     create: true
     automount: true
     name: "frontend-service-account"
-
-  podSecurityContext:
-    runAsNonRoot: true
-    runAsUser: 1000
 
   containerSecurityContext:
     allowPrivilegeEscalation: false
