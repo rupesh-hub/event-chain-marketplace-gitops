@@ -26,6 +26,8 @@ spec:
               value: "production"
             - name: ALLOWED_CORS_ORIGINS
               value: "http://34.47.217.79:8080"
+            - name: PRODUCT_SERVICE_BASE_PATH
+              value: "http://34.47.217.79:8181"
           resources:
             requests:
               memory: "256Mi"
