@@ -18,6 +18,7 @@ spec:
       containers:
         - name: discovery-server-deployment
           image: "rupesh1997/discovery-server:1.0.0"
+          imagePullPolicy: Always
           ports:
             - containerPort: 8070
           env:

@@ -19,6 +19,7 @@ spec:
       containers:
         - name: product-svc-deployment
           image: "rupesh1997/product-service:1.0.2"
+          imagePullPolicy: Always
           ports:
             - containerPort: 8181
           env:

@@ -19,6 +19,7 @@ spec:
       containers:
         - name: gateway-server-deployment
           image: "rupesh1997/gateway-server:1.0.0"
+          imagePullPolicy: Always
           ports:
             - containerPort: 8072
           env:

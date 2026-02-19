@@ -19,6 +19,7 @@ spec:
       containers:
         - name: frontend-deployment
           image: "rupesh1997/ecm-frontend-svc:1.0.0"
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
           resources:
