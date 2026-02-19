@@ -26,6 +26,8 @@ spec:
               value: "production"
             - name: ALLOWED_CORS_ORIGINS
               value: "http://34.47.217.79:8080"
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: "http://discovery-server:8070/eureka/"
           resources:
             requests:
               memory: "256Mi"
