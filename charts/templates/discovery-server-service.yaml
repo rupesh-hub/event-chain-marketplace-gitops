@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: discovery-server
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.frontend.service.type | default "ClusterIP" }}
+  ports:
+    - port: {{ .Values.discovery.service.port }}
+      targetPort: {{ .Values.discovery.service.targetPort }}
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ .Chart.Name }}-discovery

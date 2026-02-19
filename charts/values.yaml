@@ -4,6 +4,102 @@ global:
   imagePullSecrets:
     - name: registry-cred
 
+discovery:
+  replicas: 1
+
+  image:
+    repository: "rupesh1997/discovery-server"
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+
+  service:
+    port: 8070
+    targetPort: 8070
+    type: ClusterIP
+
+  env:
+    - name: SPRING_PROFILE_ACTIVE
+      value: "production"
+
+  serviceAccount:
+    create: true
+    automount: true
+    name: "discovery-service-account"
+
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 75
+
+gateway:
+  replicas: 1
+
+  image:
+    repository: "rupesh1997/gateway-server"
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+
+  service:
+    port: 8072
+    targetPort: 8072
+    type: ClusterIP
+
+  env:
+    - name: SPRING_PROFILE_ACTIVE
+      value: "production"
+    - name: ALLOWED_CORS_ORIGINS
+      value: "http://34.47.217.79:8080"
+    - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+      value: "http://discovery-server:8070/eureka/"
+
+  serviceAccount:
+    create: true
+    automount: true
+    name: "gateway-service-account"
+
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 75
+
 product:
   replicas: 1
 
@@ -20,6 +116,8 @@ product:
   env:
     - name: SPRING_PROFILE_ACTIVE
       value: "production"
+    - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+      value: "http://discovery-server:8070/eureka/"
 
   serviceAccount:
     create: true
@@ -66,10 +164,10 @@ order:
   env:
     - name: SPRING_PROFILE_ACTIVE
       value: "production"
-    - name: ALLOWED_CORS_ORIGINS
-      value: "http://34.47.217.79:8080"
     - name: PRODUCT_SERVICE_BASE_PATH
-      value: "http://34.47.217.79:8181"
+      value: "http://product-service:8181"
+    - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+      value: "http://discovery-server:8070/eureka/"
 
   serviceAccount:
     create: true

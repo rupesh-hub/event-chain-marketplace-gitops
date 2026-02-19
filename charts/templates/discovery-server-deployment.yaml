@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-discovery
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Chart.Name }}-discovery
+
+spec:
+  {{- if not .Values.discovery.autoscaling.enabled }}
+  replicas: {{ .Values.discovery.replicas }}
+  {{- end }}
+
+  {{- with .Values.discovery.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-discovery
+
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-discovery
+
+    spec:
+      serviceAccountName: {{ .Values.discovery.serviceAccount.name }}
+
+      {{- with .Values.discovery.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      # MAIN CONTAINER
+      containers:
+        - name: {{ .Chart.Name }}-discovery
+          image: "{{ .Values.discovery.image.repository }}:{{ .Values.discovery.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.discovery.image.pullPolicy }}
+
+          {{- with .Values.discovery.containerSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          ports:
+            - name: http
+              containerPort: {{ .Values.discovery.service.targetPort }}
+              protocol: TCP
+
+          {{- with .Values.discovery.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .Values.discovery.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .Values.discovery.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .Values.discovery.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .Values.discovery.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+      {{- with .Values.discovery.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .Values.discovery.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .Values.discovery.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .Values.discovery.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

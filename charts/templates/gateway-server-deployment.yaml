@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-gateway
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Chart.Name }}-gateway
+
+spec:
+  {{- if not .Values.gateway.autoscaling.enabled }}
+  replicas: {{ .Values.gateway.replicas }}
+  {{- end }}
+
+  {{- with .Values.gateway.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-gateway
+
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-gateway
+
+    spec:
+      serviceAccountName: {{ .Values.gateway.serviceAccount.name }}
+
+      {{- with .Values.gateway.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      # INIT CONTAINER
+      initContainers:
+        - name: wait-for-order-service
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              echo "Checking order service health at http://order-service:{{ .Values.order.service.port }}/actuator/health"
+              until curl -f http://order-service:{{ .Values.order.service.port }}/actuator/health 2>/dev/null; do
+                echo "Order service is unavailable - sleeping"
+                sleep 5
+              done
+              echo "Order service is up - starting gateway"
+
+      # MAIN CONTAINER
+      containers:
+        - name: {{ .Chart.Name }}-gateway
+          image: "{{ .Values.gateway.image.repository }}:{{ .Values.gateway.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.gateway.image.pullPolicy }}
+
+          {{- with .Values.gateway.containerSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          ports:
+            - name: http
+              containerPort: {{ .Values.gateway.service.targetPort }}
+              protocol: TCP
+
+          {{- with .Values.gateway.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .Values.gateway.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .Values.gateway.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .Values.gateway.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .Values.gateway.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+      {{- with .Values.gateway.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .Values.gateway.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .Values.gateway.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .Values.gateway.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

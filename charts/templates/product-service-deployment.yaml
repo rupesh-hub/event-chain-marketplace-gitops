@@ -37,6 +37,21 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 
+      # INIT CONTAINER
+      initContainers:
+        - name: wait-for-order-service
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              echo "Checking order service health at http://discovery-server:{{ .Values.discovery.service.port }}/actuator/health"
+              until curl -f http://discovery-server:{{ .Values.discovery.service.port }}/actuator/health 2>/dev/null; do
+                echo "Discovery server is unavailable - sleeping"
+                sleep 5
+              done
+              echo "Discovery is up - starting gateway"
+
       containers:
         - name: {{ .Chart.Name }}-product-service
           image: "{{ .Values.product.image.repository }}:{{ .Values.product.image.tag | default "latest" }}"

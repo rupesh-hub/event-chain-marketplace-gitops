@@ -33,9 +33,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 
-      # =========================
       # INIT CONTAINER
-      # =========================
       initContainers:
         - name: wait-for-order-service
           image: curlimages/curl:latest
@@ -43,16 +41,14 @@ spec:
             - sh
             - -c
             - |
-              echo "Checking order service health at http://order-service:{{ .Values.order.service.port }}/actuator/health"
-              until curl -f http://order-service:{{ .Values.order.service.port }}/actuator/health 2>/dev/null; do
-                echo "Order service is unavailable - sleeping"
+              echo "Checking gateway server health at http://gateway-server:{{ .Values.gateway.service.port }}/actuator/health"
+              until curl -f http://gateway-server:{{ .Values.gateway.service.port }}/actuator/health 2>/dev/null; do
+                echo "Gateway server is unavailable - sleeping"
                 sleep 5
               done
-              echo "Order service is up - starting frontend"
+              echo "Gateway server is up - starting frontend"
 
-      # =========================
       # MAIN CONTAINER
-      # =========================
       containers:
         - name: {{ .Chart.Name }}-frontend
           image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag | default "latest" }}"

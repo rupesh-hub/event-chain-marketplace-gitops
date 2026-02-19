@@ -30,7 +30,7 @@ spec:
             - name: PRODUCT_SERVICE_BASE_PATH
               value: "http://34.47.217.79:8181"
             - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-              value: "http://discovery-server:8070/eureka/"
+              value: "http://34.47.217.79:8070/eureka/"
           resources:
             requests:
               memory: "256Mi"
