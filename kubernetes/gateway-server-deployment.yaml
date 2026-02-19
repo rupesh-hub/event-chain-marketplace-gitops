@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-server-deployment
+  namespace: ecm
+  labels:
+    app: gateway-server-deployment
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-server-deployment
+  template:
+    metadata:
+      labels:
+        app: gateway-server-deployment
+    spec:
+      containers:
+        - name: gateway-server-deployment
+          image: "rupesh1997/gateway-server:1.0.0"
+          ports:
+            - containerPort: 8072
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "production"
+            - name: ALLOWED_CORS_ORIGINS
+              value: "http://34.47.217.79:8080"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discovery-server-deployment
+  namespace: ecm
+  labels:
+    app: discovery-server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discovery-server-deployment
+  template:
+    metadata:
+      labels:
+        app: discovery-server-deployment
+    spec:
+      containers:
+        - name: discovery-server-deployment
+          image: "rupesh1997/discovery-server:1.0.0"
+          ports:
+            - containerPort: 8070
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "production"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

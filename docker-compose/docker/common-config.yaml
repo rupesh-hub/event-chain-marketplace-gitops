@@ -1,4 +1,14 @@
 services:
   network-configuration:
     networks:
-      - ecm-nw
+      - ecm-ms
+
+  microservice-configuration:
+    extends:
+      service: network-configuration
+
+  microservice-discovery-server-configuration:
+    extends:
+      service: microservice-configuration
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8070/eureka/

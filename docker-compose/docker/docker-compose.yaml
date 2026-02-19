@@ -1,0 +1,96 @@
+services:
+
+  discovery-server:
+    image: rupesh1997/discovery-server:1.0.0
+    container_name: discovery-server
+    ports:
+      - "8070:8070"
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8070/actuator/health/readiness" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    extends:
+      file: common-config.yaml
+      service: microservice-configuration
+
+  product-service:
+    image: rupesh1997/product-service:1.0.2
+    container_name: product-service
+    env_file:
+      - .env
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8181/actuator/health/readiness" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    extends:
+      file: common-config.yaml
+      service: microservice-discovery-server-configuration
+
+  order-service:
+    image: rupesh1997/order-service:1.0.2
+    container_name: order-service
+    depends_on:
+      product-service:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8282/actuator/health/readiness" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    extends:
+      file: common-config.yaml
+      service: microservice-discovery-server-configuration
+
+  gateway-server:
+    image: rupesh1997/gateway-server:1.0.0
+    container_name: gateway-server
+    #    expose:
+    #      - "8072"
+    ports:
+      - "8072:8072"
+    depends_on:
+      order-service:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8072/actuator/health/readiness" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    extends:
+      file: common-config.yaml
+      service: microservice-discovery-server-configuration
+
+  ecm-frontend-svc:
+    image: rupesh1997/ecm-frontend-svc:1.0.0
+    container_name: ecm-frontend-svc
+    ports:
+      - "8080:80"
+    depends_on:
+      gateway-server:
+        condition: service_healthy
+    extends:
+      file: common-config.yaml
+      service: network-configuration
+
+networks:
+  ecm-ms:
+    driver: bridge
