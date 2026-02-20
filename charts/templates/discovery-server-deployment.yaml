@@ -33,6 +33,21 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 
+      # INIT CONTAINER
+      initContainers:
+        - name: wait-for-config-server
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              echo "Checking config server health at http://config-server:{{ .Values.config.service.port }}/actuator/health"
+              until curl -f http://config-server:{{ .Values.config.service.port }}/actuator/health 2>/dev/null; do
+                echo "Config server is unavailable - sleeping"
+                sleep 5
+              done
+              echo "Config server is up - starting frontend"
+
       # MAIN CONTAINER
       containers:
         - name: {{ .Chart.Name }}-discovery
