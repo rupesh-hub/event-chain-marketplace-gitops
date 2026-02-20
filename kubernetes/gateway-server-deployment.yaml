@@ -28,16 +28,25 @@ spec:
                 configMapKeyRef:
                   key: DEPLOYMENT_PROFILE
                   name: ecm-configs
+
             - name: ALLOWED_CORS_ORIGINS
               valueFrom:
                 configMapKeyRef:
                   key: ALLOWED_CORS_ORIGINS
                   name: ecm-configs
+
             - name: EUREKA_PATH
               valueFrom:
                 configMapKeyRef:
                   key: EUREKA_PATH
                   name: ecm-configs
+
+            - name: SPRING_CONFIG_IMPORT
+              valueFrom:
+                configMapKeyRef:
+                  key: SPRING_CONFIG_IMPORT
+                  name: ecm-configs
+
           resources:
             requests:
               memory: "256Mi"

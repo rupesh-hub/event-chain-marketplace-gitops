@@ -4,6 +4,69 @@ global:
   imagePullSecrets:
     - name: registry-cred
 
+config:
+  replicas: 1
+
+  image:
+    repository: "rupesh1997/config-server"
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+
+  service:
+    port: 8071
+    targetPort: 8071
+    type: ClusterIP
+
+  env:
+    # Spring profile
+    - name: SPRING_PROFILES_ACTIVE
+      valueFrom:
+        configMapKeyRef:
+          name: ecm-configs
+          key: CONFIG_SERVER_PROFILE
+
+    # GitHub credentials from secret
+    - name: GIT_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: git-credentials
+          key: username
+
+    - name: GIT_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: git-credentials
+          key: password
+
+  serviceAccount:
+    create: true
+    automount: true
+    name: "config-service-account"
+
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 75
+
 discovery:
   replicas: 1
 
@@ -18,8 +81,17 @@ discovery:
     type: ClusterIP
 
   env:
-    - name: SPRING_PROFILE_ACTIVE
-      value: "production"
+    - name: SPRING_PROFILES_ACTIVE
+      valueFrom:
+        configMapKeyRef:
+          key: DEPLOYMENT_PROFILE
+          name: ecm-configs
+
+    - name: SPRING_CONFIG_IMPORT
+      valueFrom:
+        configMapKeyRef:
+          key: SPRING_CONFIG_IMPORT
+          name: ecm-configs
 
   serviceAccount:
     create: true
@@ -64,12 +136,29 @@ gateway:
     type: ClusterIP
 
   env:
-    - name: SPRING_PROFILE_ACTIVE
-      value: "production"
+    - name: SPRING_PROFILES_ACTIVE
+      valueFrom:
+        configMapKeyRef:
+          key: DEPLOYMENT_PROFILE
+          name: ecm-configs
+
     - name: ALLOWED_CORS_ORIGINS
-      value: "http://34.47.217.79:8080"
-    - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-      value: "http://discovery-server:8070/eureka/"
+      valueFrom:
+        configMapKeyRef:
+          key: ALLOWED_CORS_ORIGINS
+          name: ecm-configs
+
+    - name: EUREKA_PATH
+      valueFrom:
+        configMapKeyRef:
+          key: EUREKA_PATH
+          name: ecm-configs
+
+    - name: SPRING_CONFIG_IMPORT
+      valueFrom:
+        configMapKeyRef:
+          key: SPRING_CONFIG_IMPORT
+          name: ecm-configs
 
   serviceAccount:
     create: true
@@ -114,10 +203,23 @@ product:
     type: ClusterIP
 
   env:
-    - name: SPRING_PROFILE_ACTIVE
-      value: "production"
-    - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-      value: "http://discovery-server:8070/eureka/"
+    - name: SPRING_PROFILES_ACTIVE
+      valueFrom:
+        configMapKeyRef:
+          key: DEPLOYMENT_PROFILE
+          name: ecm-configs
+
+    - name: EUREKA_PATH
+      valueFrom:
+        configMapKeyRef:
+          key: EUREKA_PATH
+          name: ecm-configs
+
+    - name: SPRING_CONFIG_IMPORT
+      valueFrom:
+        configMapKeyRef:
+          key: SPRING_CONFIG_IMPORT
+          name: ecm-configs
 
   serviceAccount:
     create: true
@@ -162,12 +264,29 @@ order:
     type: ClusterIP
 
   env:
-    - name: SPRING_PROFILE_ACTIVE
-      value: "production"
+    - name: SPRING_PROFILES_ACTIVE
+      valueFrom:
+        configMapKeyRef:
+          key: DEPLOYMENT_PROFILE
+          name: ecm-configs
+
     - name: PRODUCT_SERVICE_BASE_PATH
-      value: "http://product-service:8181"
-    - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-      value: "http://discovery-server:8070/eureka/"
+      valueFrom:
+        configMapKeyRef:
+          key: PRODUCT_SERVICE_BASE_PATH
+          name: ecm-configs
+
+    - name: EUREKA_PATH
+      valueFrom:
+        configMapKeyRef:
+          key: EUREKA_PATH
+          name: ecm-configs
+
+    - name: SPRING_CONFIG_IMPORT
+      valueFrom:
+        configMapKeyRef:
+          key: SPRING_CONFIG_IMPORT
+          name: ecm-configs
 
   serviceAccount:
     create: true

@@ -20,25 +20,27 @@ spec:
           image: "rupesh1997/config-server:1.0.0"
           imagePullPolicy: Always
           ports:
-            - containerPort: 8070
+            - containerPort: 8071
           env:
+            # Spring profile
             - name: SPRING_PROFILES_ACTIVE
               valueFrom:
                 configMapKeyRef:
-                  key: CONFIG_SERVER_PROFILE
                   name: ecm-configs
+                  key: CONFIG_SERVER_PROFILE
 
+            # GitHub credentials from secret
             - name: GIT_USERNAME
               valueFrom:
                 secretKeyRef:
-                  key: GIT_USERNAME
-                  name: ecm-secrets
+                  name: git-credentials
+                  key: username
 
             - name: GIT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: GIT_PASSWORD
-                  name: ecm-secrets
+                  name: git-credentials
+                  key: password
 
           resources:
             requests:

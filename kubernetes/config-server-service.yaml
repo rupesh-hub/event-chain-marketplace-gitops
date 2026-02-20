@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: config-service
+  name: config-server
   namespace: ecm
 
 spec:
   selector:
-    app: config-deployment
+    app: config-server-deployment
   ports:
     - port: 8071
       targetPort: 8071

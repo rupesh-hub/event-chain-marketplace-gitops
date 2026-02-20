@@ -1,2 +1,4 @@
 docker-compose/docker/.env
+docker-compose/default/.env
+docker-compose/production/.env
 .env

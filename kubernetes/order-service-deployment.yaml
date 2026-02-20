@@ -28,11 +28,13 @@ spec:
                 configMapKeyRef:
                   key: DEPLOYMENT_PROFILE
                   name: ecm-configs
+
             - name: PRODUCT_SERVICE_BASE_PATH
               valueFrom:
                 configMapKeyRef:
                   key: PRODUCT_SERVICE_BASE_PATH
                   name: ecm-configs
+
             - name: EUREKA_PATH
               valueFrom:
                 configMapKeyRef:
@@ -44,6 +46,7 @@ spec:
                 configMapKeyRef:
                   key: SPRING_CONFIG_IMPORT
                   name: ecm-configs
+
           resources:
             requests:
               memory: "256Mi"
