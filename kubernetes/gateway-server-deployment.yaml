@@ -24,11 +24,20 @@ spec:
             - containerPort: 8072
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: "production"
+              valueFrom:
+                configMapKeyRef:
+                  key: DEPLOYMENT_PROFILE
+                  name: ecm-configs
             - name: ALLOWED_CORS_ORIGINS
-              value: "http://34.47.217.79:8080"
-            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-              value: "http://34.47.217.79:8070/eureka/"
+              valueFrom:
+                configMapKeyRef:
+                  key: ALLOWED_CORS_ORIGINS
+                  name: ecm-configs
+            - name: EUREKA_PATH
+              valueFrom:
+                configMapKeyRef:
+                  key: EUREKA_PATH
+                  name: ecm-configs
           resources:
             requests:
               memory: "256Mi"

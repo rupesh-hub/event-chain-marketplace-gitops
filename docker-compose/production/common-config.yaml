@@ -7,8 +7,14 @@ services:
     extends:
       service: network-configuration
 
-  microservice-discovery-server-configuration:
+  microservice-config-server-configuration:
     extends:
       service: microservice-configuration
     environment:
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8070/eureka/
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8071/
+
+  microservice-discovery-server-configuration:
+    extends:
+      service: microservice-config-server-configuration
+    environment:
+      EUREKA_PATH: http://discovery-server:8070/eureka/

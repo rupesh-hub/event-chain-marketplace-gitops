@@ -1,5 +1,24 @@
 services:
 
+  config-server:
+    image: rupesh1997/config-server:1.0.0
+    container_name: config-server
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: git
+    ports:
+      - "8071:8071"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8071/actuator/health/readiness" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    extends:
+      file: common-config.yaml
+      service: microservice-configuration
+
   discovery-server:
     image: rupesh1997/discovery-server:1.0.0
     container_name: discovery-server
@@ -7,6 +26,9 @@ services:
       - "8070:8070"
     env_file:
       - .env
+    depends_on:
+      config-server:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8070/actuator/health/readiness" ]
       interval: 30s
@@ -15,7 +37,7 @@ services:
       start_period: 30s
     extends:
       file: common-config.yaml
-      service: microservice-configuration
+      service: microservice-config-server-configuration
 
   product-service:
     image: rupesh1997/product-service:1.0.2

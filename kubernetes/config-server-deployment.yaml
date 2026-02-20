@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-server-deployment
+  namespace: ecm
+  labels:
+    app: config-server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: config-server-deployment
+  template:
+    metadata:
+      labels:
+        app: config-server-deployment
+    spec:
+      containers:
+        - name: config-server-deployment
+          image: "rupesh1997/config-server:1.0.0"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8070
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  key: CONFIG_SERVER_PROFILE
+                  name: ecm-configs
+
+            - name: GIT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: GIT_USERNAME
+                  name: ecm-secrets
+
+            - name: GIT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: GIT_PASSWORD
+                  name: ecm-secrets
+
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

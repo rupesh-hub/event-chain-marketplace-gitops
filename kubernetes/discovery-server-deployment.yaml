@@ -20,10 +20,20 @@ spec:
           image: "rupesh1997/discovery-server:1.0.0"
           imagePullPolicy: Always
           ports:
-            - containerPort: 8070
+            - containerPort: 8071
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: "production"
+              valueFrom:
+                configMapKeyRef:
+                  key: DEPLOYMENT_PROFILE
+                  name: ecm-configs
+
+            - name: SPRING_CONFIG_IMPORT
+              valueFrom:
+                configMapKeyRef:
+                  key: SPRING_CONFIG_IMPORT
+                  name: ecm-configs
+
           resources:
             requests:
               memory: "256Mi"
