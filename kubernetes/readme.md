@@ -43,6 +43,11 @@ kubectl create secret generic git-credentials \
   --from-literal=username=<your-github-username> \
   --from-literal=password=<your-github-personal-access-token> \
   --namespace=ecm
+  
+  kubectl create secret generic git-credentials \
+  --from-literal=username=rupesh-hub \
+  --from-literal=password=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 \
+  --namespace=ecm
 
 # Example with actual values
 

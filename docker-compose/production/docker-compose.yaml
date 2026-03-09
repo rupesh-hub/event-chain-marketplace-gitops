@@ -99,7 +99,7 @@ services:
     image: rupesh1997/ecm-frontend-svc:1.0.0
     container_name: ecm-frontend-svc
     ports:
-      - "8080:80"
+      - "4200:80"
     depends_on:
       gateway-server:
         condition: service_healthy
