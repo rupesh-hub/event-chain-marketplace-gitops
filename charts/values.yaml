@@ -1,5 +1,5 @@
 global:
-  host: "34.47.217.79"
+  host: "34.100.194.93"
   environment: production
   imagePullSecrets:
     - name: registry-cred

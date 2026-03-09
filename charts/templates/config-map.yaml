@@ -6,7 +6,7 @@ metadata:
 data:
   CONFIG_SERVER_PROFILE: "git"
   DEPLOYMENT_PROFILE: "production"
-  ALLOWED_CORS_ORIGINS: "http://34.47.217.79:8080"
+  ALLOWED_CORS_ORIGINS: "http://34.47.217.79:4200"
   SPRING_CONFIG_IMPORT: "configserver:http://config-server:8071/"
   EUREKA_PATH: "http://discovery-server:8070/eureka/"
   PRODUCT_SERVICE_BASE_PATH: "http://product-service:8181"
